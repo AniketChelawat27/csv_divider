@@ -56,14 +56,3 @@ int possibleWinners(vector<int> boost_a, vector<int> boost_b, vector<int> boost_
     
     return count;
 }
-
-int main() {
-    // Test with the provided sample
-    vector<int> boost_a = {3, 4, 1, 16};
-    vector<int> boost_b = {2, 11, 5, 6};
-    vector<int> boost_c = {8, 7, 9, 10};
-    
-    cout << "Result: " << possibleWinners(boost_a, boost_b, boost_c) << endl;
-    
-    return 0;
-}
