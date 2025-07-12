@@ -1,61 +1,65 @@
 # Maximum Points Earned - C++ Solution
 
-## Problem Analysis
+## Problem Description
 
-The `calculateMaximumPointsEarned` function can be interpreted in several ways depending on the problem constraints. I've implemented multiple versions:
+This is a dynamic programming problem where you can purchase items to earn points, but purchasing an item affects all other items.
 
-## Solutions
+### Rules:
+1. When you purchase item `i`, you earn `pointValues[i]` points
+2. The purchased item becomes 0 (cannot be purchased again)
+3. **ALL OTHER items** decrease by 1 (minimum value is 0)
+4. Goal: Find the maximum total points possible
 
-### Main Solution (`solution.cpp`)
-- **Algorithm**: House Robber variant (no adjacent elements)
-- **Time Complexity**: O(n)
-- **Space Complexity**: O(n)
-- **Use Case**: When you cannot pick adjacent elements to maximize sum
+## Solution Approach
 
-### Alternative Solutions (`alternative_solutions.cpp`)
+The solution uses **memoization with recursive dynamic programming**:
+- Try purchasing each available item (value > 0)
+- For each purchase, simulate the effect on all other items
+- Use memoization to avoid recomputing the same states
+- Return the maximum points achievable
 
-1. **V1 - Maximum Subarray (Kadane's Algorithm)**
-   - Finds the maximum sum of any contiguous subarray
-   - Handles negative numbers optimally
+## Examples
 
-2. **V2 - Sum of Positive Elements**
-   - Simply sums all positive values in the array
-   - Ignores negative values
+### Sample Case 0: `[5, 5, 5]` → Output: **12**
+```
+Initial: [5, 5, 5]
+Purchase item 0 (5 points): [0, 4, 4]
+Purchase item 1 (4 points): [0, 0, 3]  
+Purchase item 2 (3 points): [0, 0, 0]
+Total: 5 + 4 + 3 = 12
+```
 
-3. **V3 - House Robber (No Adjacent)**
-   - Same as main solution
-   - Dynamic programming approach where you cannot pick adjacent elements
+### Sample Case 1: `[1, 3, 5, 2, 4]` → Output: **9**
+```
+Initial: [1, 3, 5, 2, 4]
+Purchase item 2 (5 points): [0, 2, 0, 1, 3]
+Purchase item 4 (3 points): [0, 1, 0, 0, 0]
+Purchase item 1 (1 point):  [0, 0, 0, 0, 0]
+Total: 5 + 3 + 1 = 9
+```
 
-4. **V4 - Game Theory (Optimal Play)**
-   - Two players playing optimally
-   - Each player tries to maximize their own score minus opponent's score
-
-## Example Results
-
-For input array `[2, 1, 4, 9, 3]`:
-
-- **V1 (Max subarray)**: 19 (sum of all elements)
-- **V2 (Sum positive)**: 19 (sum of all positive elements)
-- **V3 (No adjacent)**: 11 (optimal: 2 + 9 = 11)
-- **V4 (Game theory)**: -1 (optimal play result)
+### Your Question: `[5, 2, 2, 3, 1]` → Output: **7**
 
 ## Compilation & Testing
 
 ```bash
-# Compile main solution
+# Compile
 g++ -o solution solution.cpp
 
-# Compile alternatives
-g++ -o alternative_solutions alternative_solutions.cpp
+# Test with sample cases
+echo "3
+5 5 5" | ./solution     # Output: 12
 
-# Test with sample input
 echo "5
-2 1 4 9 3" | ./solution
+1 3 5 2 4" | ./solution # Output: 9
+
+echo "5
+5 2 2 3 1" | ./solution # Output: 7
 ```
 
-## Which Solution to Use?
+## Time Complexity
+- **Worst case**: O(n! × n) due to exploring all possible purchase orders
+- **With memoization**: Much better in practice due to state reuse
+- **Space**: O(states) for memoization
 
-- If the problem allows picking any elements: Use V1 or V2
-- If adjacent elements cannot be picked: Use V3 (main solution)
-- If it's a two-player game: Use V4
-- Most competitive programming "maximum points" problems use the House Robber variant (V3)
+This solution handles all the given sample cases correctly and provides the optimal maximum points.

@@ -10,23 +10,57 @@ using namespace std;
 
 long calculateMaximumPointsEarned(vector<int> pointValues) {
     int n = pointValues.size();
-    
-    // Handle edge cases
     if (n == 0) return 0;
-    if (n == 1) return pointValues[0];
     
-    // This appears to be the "House Robber" problem variant
-    // where we cannot pick adjacent elements to maximize sum
-    vector<long> dp(n);
-    dp[0] = max(0, pointValues[0]);  // Can choose not to pick first element
-    dp[1] = max(dp[0], (long)pointValues[1]);
+    // Use memoization with state compression
+    map<vector<int>, long> memo;
     
-    for (int i = 2; i < n; i++) {
-        // Either pick current element + best from i-2, or don't pick current
-        dp[i] = max(dp[i-1], dp[i-2] + pointValues[i]);
-    }
+    function<long(vector<int>&)> solve = [&](vector<int>& arr) -> long {
+        // Base case: all items have 0 value
+        bool hasPositive = false;
+        for (int val : arr) {
+            if (val > 0) {
+                hasPositive = true;
+                break;
+            }
+        }
+        if (!hasPositive) return 0;
+        
+        // Check memo
+        if (memo.find(arr) != memo.end()) {
+            return memo[arr];
+        }
+        
+        long maxPoints = 0;
+        
+        // Try purchasing each item
+        for (int i = 0; i < arr.size(); i++) {
+            if (arr[i] > 0) {
+                // Make a copy and simulate the purchase
+                vector<int> newArr = arr;
+                long points = newArr[i];
+                
+                // Set current item to 0
+                newArr[i] = 0;
+                
+                // Reduce ALL OTHER items by 1 (minimum 0)
+                for (int j = 0; j < newArr.size(); j++) {
+                    if (j != i) {
+                        newArr[j] = max(0, newArr[j] - 1);
+                    }
+                }
+                
+                // Recursively solve for remaining state
+                long totalPoints = points + solve(newArr);
+                maxPoints = max(maxPoints, totalPoints);
+            }
+        }
+        
+        memo[arr] = maxPoints;
+        return maxPoints;
+    };
     
-    return dp[n-1];
+    return solve(pointValues);
 }
 
 int main() {
