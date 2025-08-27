@@ -27,26 +27,26 @@ long getMinimumTime(vector<int> requestedHubs, vector<int> transitionTime) {
             continue;
         }
         
-        // Calculate clockwise time
+        // Calculate clockwise distance and time
         long clockwiseTime = 0;
         int pos = currentHub;
         while (pos != targetHub) {
-            // transitionTime[pos-1] is time from hub pos to hub (pos%m)+1
+            // transitionTime is 0-based, but hubs are 1-based
             clockwiseTime += transitionTime[pos - 1];
             pos++;
             if (pos > m) pos = 1; // Wrap around
         }
         
-        // Calculate counterclockwise time
+        // Calculate counterclockwise distance and time
         long counterclockwiseTime = 0;
         pos = currentHub;
         while (pos != targetHub) {
-            // Move counterclockwise: from pos to (pos-1)
-            pos--;
-            if (pos < 1) pos = m; // Wrap around
-            // transitionTime[pos-1] is time from hub pos to hub (pos%m)+1
-            // For counterclockwise movement from (pos+1) to pos, we use transitionTime[pos-1]
-            counterclockwiseTime += transitionTime[pos - 1];
+            // Move counterclockwise: from pos to pos-1
+            int prevPos = (pos == 1) ? m : pos - 1;
+            // transitionTime[prevPos-1] is time from prevPos to pos
+            // For counterclockwise, we use the transition time in reverse
+            counterclockwiseTime += transitionTime[prevPos - 1];
+            pos = prevPos;
         }
         
         // Choose the minimum time
@@ -61,14 +61,17 @@ long getMinimumTime(vector<int> requestedHubs, vector<int> transitionTime) {
 }
 
 int main() {
-    // Test with the provided examples
+    // Test case 1: Example from problem
     vector<int> requestedHubs1 = {1, 3, 3, 2};
     vector<int> transitionTime1 = {3, 2, 1};
-    cout << getMinimumTime(requestedHubs1, transitionTime1) << endl;
+    cout << "Test 1: " << getMinimumTime(requestedHubs1, transitionTime1) << endl;
+    // Expected: 4
     
+    // Test case 2: Sample case
     vector<int> requestedHubs2 = {2, 3, 3, 1};
     vector<int> transitionTime2 = {3, 2, 1};
-    cout << getMinimumTime(requestedHubs2, transitionTime2) << endl;
+    cout << "Test 2: " << getMinimumTime(requestedHubs2, transitionTime2) << endl;
+    // Expected: 6
     
     return 0;
 }

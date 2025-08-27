@@ -2,12 +2,7 @@
 using namespace std;
 
 /*
- * Complete the 'getMinimumTime' function below.
- *
- * The function is expected to return a LONG_INTEGER.
- * The function accepts following parameters:
- *  1. INTEGER_ARRAY requestedHubs
- *  2. INTEGER_ARRAY transitionTime
+ * Clearer implementation with detailed tracing
  */
 
 long getMinimumTime(vector<int> requestedHubs, vector<int> transitionTime) {
@@ -27,31 +22,37 @@ long getMinimumTime(vector<int> requestedHubs, vector<int> transitionTime) {
             continue;
         }
         
-        // Calculate clockwise time
+        // Calculate clockwise time: sum of transition times in forward direction
         long clockwiseTime = 0;
         int pos = currentHub;
         while (pos != targetHub) {
-            // transitionTime[pos-1] is time from hub pos to hub (pos%m)+1
+            // transitionTime[pos-1] is time from hub pos to hub (pos+1)
             clockwiseTime += transitionTime[pos - 1];
             pos++;
             if (pos > m) pos = 1; // Wrap around
         }
         
-        // Calculate counterclockwise time
+        // Calculate counterclockwise time: sum of transition times in reverse direction
         long counterclockwiseTime = 0;
         pos = currentHub;
         while (pos != targetHub) {
             // Move counterclockwise: from pos to (pos-1)
             pos--;
             if (pos < 1) pos = m; // Wrap around
-            // transitionTime[pos-1] is time from hub pos to hub (pos%m)+1
-            // For counterclockwise movement from (pos+1) to pos, we use transitionTime[pos-1]
+            // transitionTime[pos-1] is time from hub pos to hub (pos+1)
+            // So for counterclockwise from (pos+1) to pos, we use transitionTime[pos-1]
             counterclockwiseTime += transitionTime[pos - 1];
         }
         
         // Choose the minimum time
         long minTime = min(clockwiseTime, counterclockwiseTime);
         totalTime += minTime;
+        
+        // Debug output
+        cout << "From hub " << currentHub << " to hub " << targetHub << ":" << endl;
+        cout << "  Clockwise time: " << clockwiseTime << endl;
+        cout << "  Counterclockwise time: " << counterclockwiseTime << endl;
+        cout << "  Chosen: " << minTime << endl;
         
         // Update current position
         currentHub = targetHub;
@@ -61,14 +62,19 @@ long getMinimumTime(vector<int> requestedHubs, vector<int> transitionTime) {
 }
 
 int main() {
-    // Test with the provided examples
+    // Test case 1: Example from problem
+    cout << "=== Test Case 1 ===" << endl;
     vector<int> requestedHubs1 = {1, 3, 3, 2};
     vector<int> transitionTime1 = {3, 2, 1};
-    cout << getMinimumTime(requestedHubs1, transitionTime1) << endl;
+    cout << "Final result: " << getMinimumTime(requestedHubs1, transitionTime1) << endl;
+    cout << "Expected: 4" << endl << endl;
     
+    // Test case 2: Sample case
+    cout << "=== Test Case 2 ===" << endl;
     vector<int> requestedHubs2 = {2, 3, 3, 1};
     vector<int> transitionTime2 = {3, 2, 1};
-    cout << getMinimumTime(requestedHubs2, transitionTime2) << endl;
+    cout << "Final result: " << getMinimumTime(requestedHubs2, transitionTime2) << endl;
+    cout << "Expected: 6" << endl;
     
     return 0;
 }
